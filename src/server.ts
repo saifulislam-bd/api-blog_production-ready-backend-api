@@ -8,6 +8,8 @@ import compression from 'compression';
 // custom modules
 import config from '@/config';
 import limiter from '@/lib/express_rate_limit';
+import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongoose';
+import { logger } from './lib/winston';
 
 //router
 import v1Routes from '@/routes/v1';
@@ -33,6 +35,9 @@ const corsOptions: CorsOptions = {
           `CORS policy does not allow access from this origin: ${origin}`,
         ),
         false,
+      );
+      logger.warn(
+        `CORS policy does not allow access from this origin: ${origin}`,
       );
     }
   },
@@ -67,13 +72,15 @@ app.use(limiter);
 */
 (async () => {
   try {
+    await connectToDatabase();
+
     app.use('/api/v1', v1Routes);
 
     app.listen(config.PORT, () => {
-      console.log(`Server is running on port ${config.PORT}`);
+      logger.info(`Server is running on port ${config.PORT}`);
     });
   } catch (error) {
-    console.log(`Failed to start the server: ${error}`);
+    logger.error(`Failed to start the server: ${error}`);
     if (process.env.NODE_ENV !== 'production') {
       process.exit(1);
     }
@@ -81,11 +88,16 @@ app.use(limiter);
 })();
 
 //handle server shutdown
-const handleServerShutdown = () => {
+const handleServerShutdown = async () => {
   try {
-    console.log('Server shut down');
+    await disconnectFromDatabase();
+    logger.warn('Server shut down');
     process.exit(0);
   } catch (error) {
-    console.error(`Error during server shutdown: ${error}`);
+    logger.error(`Error during server shutdown: ${error}`);
   }
 };
+
+//listen for termination signals
+process.on('SIGTERM', handleServerShutdown);
+process.on('SIGINT', handleServerShutdown);
