@@ -17,6 +17,17 @@ type UserData = Pick<IUser, 'email' | 'password' | 'role'>;
 const register = async (req: Request, res: Response): Promise<void> => {
   const { email, password, role }: UserData = req.body;
 
+  if (role === 'admin' && !config.WHITELIST_ADMINS_MAIL.includes(email)) {
+    res.status(403).json({
+      error: 'AuthorizationError',
+      message: 'You are not authorized to register as an admin.',
+    });
+    logger.warn(`Unauthorized admin registration attempt`, {
+      email,
+    });
+    return;
+  }
+
   try {
     const username = getUsername();
     const newUser = await User.create({
