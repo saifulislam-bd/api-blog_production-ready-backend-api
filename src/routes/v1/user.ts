@@ -12,6 +12,8 @@ import getCurrentUser from '@/controllers/v1/user/get_current_user';
 import updateCurrentUser from '@/controllers/v1/user/update_current_user';
 import deleteCurrentUser from '@/controllers/v1/user/delete_current_user';
 
+import getAllUser from '@/controllers/v1/user/get_all_user';
+
 //models
 import User from '@/models/user';
 
@@ -91,5 +93,7 @@ router.delete(
   authorize(['admin', 'user']),
   deleteCurrentUser,
 );
+
+router.get('/', authenticate, authorize(['admin']), getAllUser);
 
 export default router;

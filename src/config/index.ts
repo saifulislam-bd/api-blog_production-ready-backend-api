@@ -24,5 +24,7 @@ const config = {
     'saifulislam.github@gmail.com',
     'saifulislam.dev22@gmail.com',
   ],
+  DEFAULT_RESULT_LIMIT: 20,
+  DEFAULT_RESULT_OFFSET: 0,
 };
 export default config;
