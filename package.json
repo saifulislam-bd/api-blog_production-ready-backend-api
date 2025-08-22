@@ -1,7 +1,7 @@
 {
   "name": "blog-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple RESTful API for managing blog content. It supports CRUD operations for posts, categories, and comments, along with user authentication and authorization. Built to provide a clean and scalable backend for blogging platforms or personal projects.",
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon",
