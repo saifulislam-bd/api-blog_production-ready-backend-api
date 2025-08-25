@@ -60,13 +60,14 @@ const uploadBanner = (method: 'post' | 'put') => {
       logger.info('Blog banner uploaded successfully', { banner: newBanner });
       req.body.banner = newBanner;
       next();
-    } catch (error: UploadApiErrorResponse | any) {
-      res.status(error.http_status).json({
-        code: error.http_status < 500 ? 'ValidationError' : error.name,
-        message: error.message,
-        error,
+    } catch (err: UploadApiErrorResponse | any) {
+      const statusCode = err.http_code ? err.http_code : 500;
+      res.status(statusCode).json({
+        code: statusCode < 500 ? 'ValidationError' : err.name,
+        message: err.message,
+        err,
       });
-      logger.error('Error during uploading blog banner to cloudinary', error);
+      logger.error('Error during uploading blog banner to cloudinary', err);
     }
   };
 };
