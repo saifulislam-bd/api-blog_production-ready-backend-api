@@ -32,8 +32,8 @@ const uploadBanner = (method: 'post' | 'put') => {
       return;
     }
     try {
-      // const {blogId} = req.params;
-      // const blog = await Blog.findById(blogId).select('banner.publicId').exec();
+      const { blogId } = req.params;
+      const blog = await Blog.findById(blogId).select('banner.publicId').exec();
 
       const data = await uploadToCloudinary(
         req.file.buffer,
